@@ -3,825 +3,841 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Processing Date Calculator</title>
+<title>Processing Date Predictor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ============================================================
-     TOKENS
-     ============================================================ */
-  :root{
-    --bg:#0e1117;
-    --bg-2:#0b0d12;
-    --panel:#181c25;
-    --panel-soft:#1f2430;
-    --board:#0b0d12;
-    --line:rgba(255,255,255,0.09);
-    --line-soft:rgba(255,255,255,0.05);
-
-    --amber:#f5b942;
-    --amber-soft:rgba(245,185,66,0.14);
-    --teal:#49d9c0;
-    --teal-soft:rgba(73,217,192,0.14);
-    --coral:#ff8a68;
-    --coral-soft:rgba(255,138,104,0.16);
-
-    --text:#edf0f6;
-    --text-dim:#96a0b3;
-    --text-faint:#5a6478;
-
-    --radius-lg:18px;
-    --radius-md:12px;
-    --radius-sm:7px;
-
-    --font-display:'Big Shoulders Display', sans-serif;
-    --font-body:'Inter', sans-serif;
-    --font-mono:'IBM Plex Mono', monospace;
-
-    --ease:cubic-bezier(.22,.8,.25,1);
+  :root {
+    --ink:        #12181F;
+    --panel:      #1B232C;
+    --panel-2:    #202B36;
+    --line:       #2C3846;
+    --text:       #E9EDF1;
+    --muted:      #7F8FA0;
+    --muted-dim:  #56606C;
+    --teal:       #3FB39A;
+    --teal-dim:   rgba(63, 179, 154, 0.14);
+    --amber:      #E8A23B;
+    --amber-dim:  rgba(232, 162, 59, 0.14);
+    --rust:       #DC6B4B;
+    --rust-dim:   rgba(220, 107, 75, 0.14);
+    --radius:     10px;
+    --font-display: 'Oswald', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
   }
 
-  *{ box-sizing:border-box; }
+  * { box-sizing: border-box; }
 
-  html,body{
-    margin:0;
-    padding:0;
+  body {
+    margin: 0;
+    min-height: 100vh;
     background:
-      radial-gradient(1100px 600px at 15% -10%, rgba(245,185,66,0.06), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(73,217,192,0.05), transparent 55%),
-      var(--bg);
-    color:var(--text);
-    font-family:var(--font-body);
-    min-height:100vh;
+      radial-gradient(circle at 12% -10%, rgba(63,179,154,0.08), transparent 45%),
+      radial-gradient(circle at 88% 110%, rgba(232,162,59,0.06), transparent 45%),
+      var(--ink);
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 48px 20px 80px;
+    line-height: 1.5;
   }
 
-  body{
-    background-image:
-      linear-gradient(var(--line-soft) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px),
-      radial-gradient(1100px 600px at 15% -10%, rgba(245,185,66,0.06), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(73,217,192,0.05), transparent 55%),
-      var(--bg);
-    background-size:42px 42px, 42px 42px, auto, auto, auto;
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
   }
 
-  ::selection{ background:var(--amber-soft); color:var(--text); }
-
-  :focus-visible{
-    outline:2px solid var(--amber);
-    outline-offset:3px;
-    border-radius:4px;
+  /* ---------- Header ---------- */
+  .masthead {
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .eyebrow .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-dim);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eyebrow .dot { animation: none; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 0.01em;
+    margin: 0 0 8px;
+  }
+  .masthead p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14.5px;
+    max-width: 50ch;
   }
 
-  /* ============================================================
-     LAYOUT SHELL
-     ============================================================ */
-  .app{
-    max-width:760px;
-    margin:0 auto;
-    padding:56px 24px 96px;
+  /* ---------- Step chain ---------- */
+  .chain {
+    position: relative;
+  }
+  .step {
+    position: relative;
+    display: flex;
+    gap: 18px;
+    padding-bottom: 28px;
+  }
+  .step:last-child { padding-bottom: 0; }
+
+  .rail {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+  }
+  .rail-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: var(--muted);
+    border-radius: 5px;
+    padding: 4px 0;
+    width: 40px;
+    text-align: center;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .step.is-active .rail-tag,
+  .step.is-complete .rail-tag {
+    background: var(--teal);
+  }
+  .rail-line {
+    flex: 1;
+    width: 2px;
+    background: var(--line);
+    margin-top: 8px;
+    border-radius: 2px;
+  }
+  .step:last-child .rail-line { display: none; }
+
+  .panel {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    opacity: 0.45;
+    filter: grayscale(0.4);
+    pointer-events: none;
+    transform: translateY(0);
+    transition: opacity 0.35s ease, filter 0.35s ease;
+  }
+  .step.is-active .panel,
+  .step.is-complete .panel {
+    opacity: 1;
+    filter: none;
+    pointer-events: auto;
+  }
+  .step.is-active .panel {
+    border-color: rgba(63, 179, 154, 0.4);
   }
 
-  .masthead{
-    margin-bottom:40px;
+  .panel h2 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+    color: var(--text);
+  }
+  .panel .sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 16px;
   }
 
-  .eyebrow{
-    font-family:var(--font-mono);
-    font-size:12px;
-    letter-spacing:0.18em;
-    color:var(--amber);
-    text-transform:uppercase;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:14px;
+  /* ---------- Segmented radio controls ---------- */
+  .segmented {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  .eyebrow::before{
-    content:"";
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--amber);
-    box-shadow:0 0 0 4px var(--amber-soft);
+  .segmented input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
   }
-
-  h1{
-    font-family:var(--font-display);
-    font-weight:800;
-    font-size:clamp(34px, 5.5vw, 48px);
-    letter-spacing:0.01em;
-    line-height:1.02;
-    margin:0 0 12px;
-    text-transform:uppercase;
+  .segmented label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
   }
-
-  .subtitle{
-    color:var(--text-dim);
-    font-size:15px;
-    line-height:1.6;
-    max-width:52ch;
-    margin:0;
+  .segmented label:hover {
+    border-color: var(--muted-dim);
+    color: var(--text);
   }
-
-  .reset-link{
-    background:none;
-    border:1px solid var(--line);
-    color:var(--text-dim);
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    padding:8px 14px;
-    border-radius:999px;
-    cursor:pointer;
-    margin-top:22px;
-    transition:border-color .2s var(--ease), color .2s var(--ease);
+  .segmented input:checked + label {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+    color: var(--teal);
   }
-  .reset-link:hover{ border-color:var(--amber); color:var(--amber); }
-
-  /* ============================================================
-     STEPPER
-     ============================================================ */
-  .stepper{
-    margin-bottom:32px;
-  }
-  .stepper-track{
-    display:flex;
-    align-items:center;
-  }
-  .stepper-item{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-shrink:0;
-  }
-  .stepper-index{
-    font-family:var(--font-mono);
-    font-size:11px;
-    font-weight:600;
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:1px solid var(--line);
-    color:var(--text-faint);
-    transition:all .25s var(--ease);
-  }
-  .stepper-label{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--text-faint);
-    transition:color .25s var(--ease);
-    white-space:nowrap;
-  }
-  .stepper-connector{
-    flex:1;
-    height:1px;
-    background:var(--line);
-    margin:0 10px;
-    min-width:16px;
-    transition:background .25s var(--ease);
-  }
-  .stepper-item[data-state="active"] .stepper-index{
-    border-color:var(--amber);
-    color:var(--amber);
-    box-shadow:0 0 0 4px var(--amber-soft);
-  }
-  .stepper-item[data-state="active"] .stepper-label{ color:var(--amber); }
-  .stepper-item[data-state="complete"] .stepper-index{
-    border-color:var(--teal);
-    background:var(--teal);
-    color:#04211c;
-  }
-  .stepper-item[data-state="complete"] .stepper-label{ color:var(--teal); }
-  .stepper-item[data-state="complete"] + .stepper-connector{ background:var(--teal); opacity:0.5; }
-
-  /* ============================================================
-     STEP CARDS
-     ============================================================ */
-  .steps{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
+  .segmented input:focus-visible + label {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
   }
 
-  .step-card{
-    background:linear-gradient(180deg, var(--panel), var(--panel-soft));
-    border:1px solid var(--line);
-    border-radius:var(--radius-lg);
-    padding:26px 26px 28px;
-    animation:revealCard .45s var(--ease);
+  /* ---------- Text / datetime input ---------- */
+  .field {
+    margin-top: 2px;
+  }
+  .field label.field-label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  input[type="text"].dt-input {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 11px 14px;
+    transition: border-color 0.15s ease;
+  }
+  input[type="text"].dt-input:focus {
+    outline: none;
+    border-color: var(--teal);
+  }
+  input[type="text"].dt-input.has-error {
+    border-color: var(--rust);
+  }
+  .format-hint {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted-dim);
+    margin: 8px 0 0;
   }
 
-  @keyframes revealCard{
-    from{ opacity:0; transform:translateY(8px); }
-    to{ opacity:1; transform:translateY(0); }
+  /* ---------- Dish toggle ---------- */
+  .dish-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+  }
+  .dish-copy { font-size: 13px; }
+  .dish-copy strong {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .dish-copy span { color: var(--muted); }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex: 0 0 auto;
+  }
+  .switch input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+  }
+  .switch .track {
+    position: absolute;
+    inset: 0;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .switch .thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .switch input:checked ~ .track {
+    background: var(--amber-dim);
+    border-color: var(--amber);
+  }
+  .switch input:checked ~ .thumb {
+    transform: translateX(20px);
+    background: var(--amber);
+  }
+  .switch input:focus-visible ~ .track {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
   }
 
-  .step-card h2{
-    display:flex;
-    align-items:baseline;
-    gap:10px;
-    font-family:var(--font-display);
-    font-weight:700;
-    font-size:20px;
-    letter-spacing:0.01em;
-    text-transform:uppercase;
-    margin:0 0 18px;
+  /* ---------- Validation hints ---------- */
+  .hint {
+    font-size: 13px;
+    color: var(--muted-dim);
+    margin: 14px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .step-num{
-    font-family:var(--font-mono);
-    font-size:13px;
-    color:var(--amber);
-    font-weight:600;
+  .hint::before {
+    content: "→";
+    color: var(--muted-dim);
+  }
+  .error-msg {
+    font-size: 13px;
+    color: var(--rust);
+    margin: 10px 0 0;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ---------- Result readout ---------- */
+  .readout {
+    display: none;
+    border-left: 3px solid var(--teal);
+    background: var(--panel-2);
+    border-radius: 0 8px 8px 0;
+    padding: 4px 20px 18px;
+    animation: rise 0.35s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .readout { animation: none; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .readout.show { display: block; }
+  .readout.late { border-left-color: var(--rust); }
+
+  .readout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+    margin-top: 18px;
+  }
+  .readout-item.full { grid-column: 1 / -1; }
+  .readout-item .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .readout-item .v {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .rule-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 5px;
+    background: var(--teal-dim);
+    color: var(--teal);
+  }
+  .readout.late .rule-tag {
+    background: var(--rust-dim);
+    color: var(--rust);
+  }
+  .dish-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--amber-dim);
+    color: var(--amber);
+    margin-left: 6px;
   }
 
-  /* Pill radio groups (Category / Time Zone) */
-  .pill-group{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
+  .predicted-block {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
   }
-  .pill{
-    position:relative;
-    display:inline-flex;
+  .predicted-block .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
   }
-  .pill input{
-    position:absolute;
-    opacity:0;
-    width:1px;
-    height:1px;
-    pointer-events:none;
+  .predicted-date {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.01em;
   }
-  .pill span{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:12px 18px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:var(--bg-2);
-    color:var(--text-dim);
-    font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:0.06em;
-    cursor:pointer;
-    transition:all .2s var(--ease);
-    user-select:none;
-  }
-  .pill span::before{
-    content:"";
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    border:1px solid var(--text-faint);
-    transition:all .2s var(--ease);
-  }
-  .pill:hover span{ border-color:var(--text-dim); color:var(--text); }
-  .pill input:checked + span{
-    border-color:var(--amber);
-    background:var(--amber-soft);
-    color:var(--amber);
-  }
-  .pill input:checked + span::before{
-    background:var(--amber);
-    border-color:var(--amber);
-    box-shadow:0 0 0 3px var(--amber-soft);
-  }
-  .pill input:focus-visible + span{
-    outline:2px solid var(--amber);
-    outline-offset:2px;
-  }
+  .readout.late .predicted-date { color: var(--rust); }
 
-  /* Datetime field */
-  .field-label{
-    display:block;
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--text-faint);
-    margin-bottom:10px;
-  }
-  .datetime-input{
-    width:100%;
-    max-width:320px;
-    background:var(--bg-2);
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    color:var(--text);
-    font-family:var(--font-mono);
-    font-size:15px;
-    padding:12px 14px;
-    color-scheme:dark;
-    transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
-  }
-  .datetime-input:hover{ border-color:var(--text-dim); }
-  .datetime-input:focus{
-    outline:none;
-    border-color:var(--amber);
-    box-shadow:0 0 0 3px var(--amber-soft);
-  }
-
-  /* ============================================================
-     RESULT: validation checklist + split-flap board
-     ============================================================ */
-  .validation-panel{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-  .validation-title{
-    margin:0;
-    font-size:14px;
-    color:var(--text-dim);
-  }
-  .validation-list{
-    list-style:none;
-    margin:0;
-    padding:0;
-    display:flex;
-    flex-direction:column;
-    gap:9px;
-  }
-  .validation-list li{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:14px;
-    color:var(--text-faint);
-    transition:color .2s var(--ease);
-  }
-  .validation-list li::before{
-    content:"";
-    flex-shrink:0;
-    width:16px;
-    height:16px;
-    border-radius:5px;
-    border:1px solid var(--line);
-    background:var(--bg-2);
-    transition:all .2s var(--ease);
-  }
-  .validation-list li[data-done="true"]{ color:var(--text); }
-  .validation-list li[data-done="true"]::before{
-    border-color:var(--teal);
-    background:var(--teal);
-    box-shadow:inset 0 0 0 3px var(--bg-2);
-  }
-
-  .board{
-    display:flex;
-    flex-direction:column;
-    gap:1px;
-    background:var(--line-soft);
-    border:1px solid var(--line);
-    border-radius:var(--radius-md);
-    overflow:hidden;
-  }
-  .board-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    background:var(--bg-2);
-    padding:14px 18px;
-  }
-  .board-label{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--text-faint);
-  }
-  .board-value{
-    font-size:15px;
-    font-weight:600;
-    color:var(--text);
-    text-align:right;
-  }
-  .board-value.mono{ font-family:var(--font-mono); }
-
-  .rule-pill{
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:999px;
-    font-family:var(--font-mono);
-    font-size:12px;
-    letter-spacing:0.03em;
-  }
-  .rule-pill.rule-plus1{ background:var(--teal-soft); color:var(--teal); }
-  .rule-pill.rule-plus2{ background:var(--coral-soft); color:var(--coral); }
-
-  /* Featured predicted-date tile: the split-flap signature element */
-  .board-row-featured{
-    background:var(--board);
-    padding:20px 18px;
-  }
-  .board-row-featured .board-label{ color:var(--amber); }
-  .flip-target{
-    font-family:var(--font-mono);
-    font-size:26px;
-    font-weight:700;
-    letter-spacing:0.03em;
-    color:var(--amber);
-    background:linear-gradient(180deg, #14171d, #0c0e12);
-    border:1px solid rgba(245,185,66,0.25);
-    border-radius:var(--radius-sm);
-    padding:8px 16px;
-    display:inline-block;
-    transform-origin:top center;
-  }
-  .flip-anim{
-    animation:flapFlip .55s var(--ease);
-  }
-  @keyframes flapFlip{
-    0%{ transform:rotateX(-90deg); opacity:0.2; }
-    55%{ transform:rotateX(12deg); opacity:1; }
-    100%{ transform:rotateX(0deg); }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .flip-anim{ animation:none; }
-    .step-card{ animation:none; }
-  }
-
-  /* ============================================================
-     RESPONSIVE
-     ============================================================ */
-  @media (max-width:560px){
-    .app{ padding:36px 16px 72px; }
-    .stepper-label{ display:none; }
-    .stepper-connector{ margin:0 6px; }
-    .step-card{ padding:20px 18px 22px; }
-    .board-row{ flex-direction:column; align-items:flex-start; gap:6px; }
-    .board-value{ text-align:left; }
-    .board-row-featured{ align-items:flex-start; }
-    .flip-target{ font-size:22px; }
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 11.5px;
+    color: var(--muted-dim);
+    font-family: var(--font-mono);
   }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="app">
+  <div class="masthead">
+    <div class="eyebrow"><span class="dot"></span> Traffic Processing System</div>
+    <h1>Processing Date Predictor</h1>
+    <p>Set the category, time zone and received timestamp — the predicted processing date recalculates automatically as each field changes.</p>
+  </div>
 
-  <header class="masthead">
-    <div class="eyebrow">Cutoff &amp; Dispatch Engine</div>
-    <h1>Processing Date Calculator</h1>
-    <p class="subtitle">Pick a category and time zone, drop in when the item was received, and the predicted processing date updates on its own — no button required.</p>
-    <button type="button" class="reset-link" id="resetBtn">Start Over</button>
-  </header>
+  <div class="chain">
 
-  <nav class="stepper" aria-label="Progress">
-    <div class="stepper-track">
-      <div class="stepper-item" data-state="active" id="stepper-1">
-        <span class="stepper-index">01</span><span class="stepper-label">Category</span>
+    <!-- STEP 1: CATEGORY -->
+    <div class="step is-active" id="step1">
+      <div class="rail">
+        <div class="rail-tag">01</div>
+        <div class="rail-line"></div>
       </div>
-      <div class="stepper-connector"></div>
-      <div class="stepper-item" data-state="pending" id="stepper-2">
-        <span class="stepper-index">02</span><span class="stepper-label">Time Zone</span>
-      </div>
-      <div class="stepper-connector"></div>
-      <div class="stepper-item" data-state="pending" id="stepper-3">
-        <span class="stepper-index">03</span><span class="stepper-label">Received</span>
-      </div>
-      <div class="stepper-connector"></div>
-      <div class="stepper-item" data-state="pending" id="stepper-4">
-        <span class="stepper-index">04</span><span class="stepper-label">Result</span>
+      <div class="panel">
+        <h2>Category</h2>
+        <p class="sub">Choose the traffic category this item belongs to.</p>
+        <div class="segmented" id="categoryGroup">
+          <input type="radio" name="category" id="cat-ampersand" value="AMPERSAND">
+          <label for="cat-ampersand">AMPERSAND</label>
+
+          <input type="radio" name="category" id="cat-political" value="POLITICAL">
+          <label for="cat-political">POLITICAL</label>
+
+          <input type="radio" name="category" id="cat-digital" value="DIGITAL">
+          <label for="cat-digital">DIGITAL</label>
+        </div>
       </div>
     </div>
-  </nav>
 
-  <div class="steps">
-
-    <!-- STEP 1: Category -->
-    <section class="step-card" id="step1">
-      <h2><span class="step-num">01</span> Category</h2>
-      <div class="pill-group" id="categoryGroup" role="radiogroup" aria-label="Category">
-        <label class="pill"><input type="radio" name="category" value="AMPERSAND"><span>AMPERSAND</span></label>
-        <label class="pill"><input type="radio" name="category" value="POLITICAL"><span>POLITICAL</span></label>
-        <label class="pill"><input type="radio" name="category" value="DIGITAL"><span>DIGITAL</span></label>
+    <!-- STEP 2: TIME ZONE -->
+    <div class="step" id="step2">
+      <div class="rail">
+        <div class="rail-tag">02</div>
+        <div class="rail-line"></div>
       </div>
-    </section>
+      <div class="panel">
+        <h2>Time Zone</h2>
+        <p class="sub">Determines which cutoff time applies.</p>
+        <div class="segmented" id="timezoneGroup">
+          <input type="radio" name="timezone" id="tz-est" value="EST">
+          <label for="tz-est">EST</label>
 
-    <!-- STEP 2: Time Zone (revealed after category is chosen) -->
-    <section class="step-card" id="step2" hidden>
-      <h2><span class="step-num">02</span> Time Zone</h2>
-      <div class="pill-group" id="timezoneGroup" role="radiogroup" aria-label="Time Zone">
-        <label class="pill"><input type="radio" name="timezone" value="EST"><span>EST</span></label>
-        <label class="pill"><input type="radio" name="timezone" value="CST"><span>CST</span></label>
-        <label class="pill"><input type="radio" name="timezone" value="MST"><span>MST</span></label>
-        <label class="pill"><input type="radio" name="timezone" value="PST"><span>PST</span></label>
+          <input type="radio" name="timezone" id="tz-cst" value="CST">
+          <label for="tz-cst">CST</label>
+
+          <input type="radio" name="timezone" id="tz-mst" value="MST">
+          <label for="tz-mst">MST</label>
+
+          <input type="radio" name="timezone" id="tz-pst" value="PST">
+          <label for="tz-pst">PST</label>
+        </div>
+        <p class="hint" id="step2Hint">Select a category to unlock time zone options.</p>
       </div>
-    </section>
+    </div>
 
-    <!-- STEP 3: Received Date & Time (revealed after time zone is chosen) -->
-    <section class="step-card" id="step3" hidden>
-      <h2><span class="step-num">03</span> Received Date &amp; Time</h2>
-      <label class="field-label" for="receivedInput">Date &amp; time received</label>
-      <input type="datetime-local" id="receivedInput" class="datetime-input">
-    </section>
-
-    <!-- STEP 4: Result -->
-    <section class="step-card" id="step4">
-      <h2><span class="step-num">04</span> Result</h2>
-
-      <div class="validation-panel" id="validationPanel">
-        <p class="validation-title" id="validationTitle">Complete these steps to see your prediction:</p>
-        <ul class="validation-list">
-          <li data-done="false" id="check-category">Select a category</li>
-          <li data-done="false" id="check-timezone">Select a time zone</li>
-          <li data-done="false" id="check-received">Enter the received date &amp; time</li>
-        </ul>
+    <!-- STEP 3: RECEIVED DATE & TIME -->
+    <div class="step" id="step3">
+      <div class="rail">
+        <div class="rail-tag">03</div>
+        <div class="rail-line"></div>
       </div>
+      <div class="panel">
+        <h2>Received Date &amp; Time</h2>
+        <p class="sub">Paste or type the received timestamp — no picker required.</p>
+        <div class="field">
+          <label class="field-label" for="receivedInput">Received timestamp</label>
+          <input type="text" class="dt-input" id="receivedInput" placeholder="M/D/YYYY H:MM AM/PM  e.g. 7/2/2026 7:36 AM" autocomplete="off" spellcheck="false">
+          <p class="format-hint">Format: M/D/YYYY H:MM AM/PM — supports copy-paste directly into the field.</p>
+          <p class="error-msg" id="dateError"></p>
+        </div>
 
-      <div class="board" id="resultBoard" hidden>
-        <div class="board-row">
-          <span class="board-label">Category</span>
-          <span class="board-value" id="outCategory">—</span>
+        <div class="dish-row">
+          <div class="dish-copy">
+            <strong>Dish Routing</strong>
+            <span>Adds one additional processing day when enabled.</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="dishCheckbox">
+            <span class="track"></span>
+            <span class="thumb"></span>
+          </label>
         </div>
-        <div class="board-row">
-          <span class="board-label">Timezone</span>
-          <span class="board-value" id="outTimezone">—</span>
-        </div>
-        <div class="board-row">
-          <span class="board-label">Received</span>
-          <span class="board-value mono" id="outReceived">—</span>
-        </div>
-        <div class="board-row">
-          <span class="board-label">Cutoff</span>
-          <span class="board-value mono" id="outCutoff">—</span>
-        </div>
-        <div class="board-row">
-          <span class="board-label">Rule Applied</span>
-          <span class="board-value" id="outRule">—</span>
-        </div>
-        <div class="board-row board-row-featured">
-          <span class="board-label">Predicted Date</span>
-          <span class="board-value mono flip-target" id="outPredicted">—</span>
+
+        <p class="hint" id="step3Hint">Select a time zone to unlock this field.</p>
+      </div>
+    </div>
+
+    <!-- STEP 4: RESULT -->
+    <div class="step" id="step4">
+      <div class="rail">
+        <div class="rail-tag">04</div>
+      </div>
+      <div class="panel">
+        <h2>Result</h2>
+        <p class="sub">Updates automatically — no button required.</p>
+
+        <p class="hint" id="step4Hint">Complete the fields above to see the prediction.</p>
+
+        <div class="readout" id="readout">
+          <div class="readout-grid">
+            <div class="readout-item">
+              <div class="k">Category</div>
+              <div class="v" id="outCategory">—</div>
+            </div>
+            <div class="readout-item">
+              <div class="k">Time Zone</div>
+              <div class="v" id="outTimezone">—</div>
+            </div>
+            <div class="readout-item">
+              <div class="k">Received</div>
+              <div class="v" id="outReceived">—</div>
+            </div>
+            <div class="readout-item">
+              <div class="k">Cutoff</div>
+              <div class="v" id="outCutoff">—</div>
+            </div>
+            <div class="readout-item full">
+              <div class="k">Rule Applied</div>
+              <div class="v">
+                <span class="rule-tag" id="outRule">—</span>
+                <span class="dish-tag" id="outDishTag" style="display:none;">DISH +1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="predicted-block">
+            <div class="k">Predicted Processing Date</div>
+            <div class="predicted-date" id="outPredicted">—</div>
+          </div>
         </div>
       </div>
-
-    </section>
+    </div>
 
   </div>
+
+  <footer>All computations run locally in your browser — nothing is sent anywhere.</footer>
 </div>
 
 <script>
-(function(){
-  "use strict";
+/* =========================================================================
+   CONFIGURATION
+   Cutoff times are stored in one place so the business rules never need
+   to be hardcoded anywhere else in the code.
+   ========================================================================= */
+const CUTOFF_TIMES = {
+  AMPERSAND: { EST: '10:05 AM', CST: '11:05 AM', MST: '12:05 PM', PST: '1:05 PM' },
+  POLITICAL: { EST: '2:05 PM',  CST: '3:05 PM',  MST: '4:05 PM',  PST: '5:05 PM' },
+  DIGITAL:   { EST: '1:05 PM',  CST: '2:05 PM',  MST: '3:05 PM',  PST: '4:05 PM' }
+};
 
-  /* ============================================================
-     CONFIG
-     All cutoff times live in one place. Each entry is 24-hour
-     { hour, minute } so comparisons never need string parsing.
-     ============================================================ */
-  const CUTOFFS = {
-    AMPERSAND: {
-      EST: { hour: 10, minute: 5 },
-      CST: { hour: 11, minute: 5 },
-      MST: { hour: 12, minute: 5 },
-      PST: { hour: 13, minute: 5 }
-    },
-    POLITICAL: {
-      EST: { hour: 14, minute: 5 },
-      CST: { hour: 15, minute: 5 },
-      MST: { hour: 16, minute: 5 },
-      PST: { hour: 17, minute: 5 }
-    },
-    DIGITAL: {
-      EST: { hour: 13, minute: 5 },
-      CST: { hour: 14, minute: 5 },
-      MST: { hour: 15, minute: 5 },
-      PST: { hour: 16, minute: 5 }
-    }
-  };
+/* =========================================================================
+   ELEMENT REFERENCES
+   ========================================================================= */
+const step2El   = document.getElementById('step2');
+const step3El   = document.getElementById('step3');
+const step4El   = document.getElementById('step4');
 
-  /* ============================================================
-     DOM REFERENCES
-     ============================================================ */
-  const step2Card   = document.getElementById('step2');
-  const step3Card   = document.getElementById('step3');
-  const receivedInput = document.getElementById('receivedInput');
-  const resetBtn    = document.getElementById('resetBtn');
+const step2Hint = document.getElementById('step2Hint');
+const step3Hint = document.getElementById('step3Hint');
+const step4Hint = document.getElementById('step4Hint');
 
-  const validationPanel = document.getElementById('validationPanel');
-  const validationTitle = document.getElementById('validationTitle');
-  const resultBoard     = document.getElementById('resultBoard');
+const receivedInput = document.getElementById('receivedInput');
+const dishCheckbox   = document.getElementById('dishCheckbox');
+const dateError       = document.getElementById('dateError');
 
-  const checkCategory = document.getElementById('check-category');
-  const checkTimezone = document.getElementById('check-timezone');
-  const checkReceived = document.getElementById('check-received');
+const readout        = document.getElementById('readout');
+const outCategory     = document.getElementById('outCategory');
+const outTimezone     = document.getElementById('outTimezone');
+const outReceived     = document.getElementById('outReceived');
+const outCutoff       = document.getElementById('outCutoff');
+const outRule         = document.getElementById('outRule');
+const outDishTag      = document.getElementById('outDishTag');
+const outPredicted    = document.getElementById('outPredicted');
 
-  const outCategory  = document.getElementById('outCategory');
-  const outTimezone  = document.getElementById('outTimezone');
-  const outReceived  = document.getElementById('outReceived');
-  const outCutoff    = document.getElementById('outCutoff');
-  const outRule      = document.getElementById('outRule');
-  const outPredicted = document.getElementById('outPredicted');
+/* =========================================================================
+   HELPERS
+   ========================================================================= */
 
-  const stepperItems = {
-    1: document.getElementById('stepper-1'),
-    2: document.getElementById('stepper-2'),
-    3: document.getElementById('stepper-3'),
-    4: document.getElementById('stepper-4')
-  };
+// Returns the currently checked radio value for a given input name, or null.
+function getCheckedValue(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
 
-  /* ============================================================
-     HELPERS: parsing & formatting
-     ============================================================ */
+// Converts a "H:MM AM/PM" style time string into minutes since midnight.
+// Used both for cutoff times and for the parsed received time, so the
+// comparison logic only ever has to deal with plain numbers.
+function timeStringToMinutes(timeStr) {
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+  if (!match) return null;
 
-  // Reads the current radio selection for a given group name.
-  function getSelectedValue(groupName){
-    const checked = document.querySelector('input[name="' + groupName + '"]:checked');
-    return checked ? checked.value : null;
+  let hour = parseInt(match[1], 10);
+  const minute = parseInt(match[2], 10);
+  const ampm = match[3].toUpperCase();
+
+  if (ampm === 'PM' && hour !== 12) hour += 12;
+  if (ampm === 'AM' && hour === 12) hour = 0;
+
+  return hour * 60 + minute;
+}
+
+// Parses the free-typed / pasted "M/D/YYYY H:MM AM/PM" received timestamp.
+// Returns { valid: true, date, timeMinutes } on success, or
+// { valid: false, error } with a friendly message on failure.
+function parseReceivedDateTime(rawValue) {
+  const value = rawValue.trim();
+
+  if (!value) {
+    return { valid: false, error: '' }; // empty is not an "error", just incomplete
   }
 
-  // Splits a datetime-local value ("YYYY-MM-DDTHH:MM") into plain
-  // numeric parts. Returns null if no value has been entered yet.
-  function parseDateTimeLocal(value){
-    if (!value) return null;
-    const [datePart, timePart] = value.split('T');
-    if (!datePart || !timePart) return null;
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hour, minute] = timePart.split(':').map(Number);
-    return { year, month, day, hour, minute };
-  }
+  const pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})\s*([AP]M)$/i;
+  const match = value.match(pattern);
 
-  // Converts 24-hour hour/minute into a "7:36 AM" style string.
-  function formatTime12(hour24, minute){
-    const period = hour24 >= 12 ? 'PM' : 'AM';
-    let hour12 = hour24 % 12;
-    if (hour12 === 0) hour12 = 12;
-    const paddedMinute = String(minute).padStart(2, '0');
-    return hour12 + ':' + paddedMinute + ' ' + period;
-  }
-
-  // Formats a Date object as "M/D/YYYY" (no leading zeros).
-  function formatDate(date){
-    return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
-  }
-
-  // Builds a Date anchored at local noon, so adding/subtracting
-  // days is never thrown off by daylight-saving hour shifts.
-  function buildAnchorDate(year, month, day){
-    return new Date(year, month - 1, day, 12, 0, 0);
-  }
-
-  function addDays(date, days){
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-
-  /* ============================================================
-     CORE BUSINESS LOGIC
-     Given a category, timezone and received datetime, returns
-     everything the result board needs to display.
-     ============================================================ */
-  function computePrediction(category, timezone, received){
-    const cutoff = CUTOFFS[category][timezone];
-
-    const receivedMinutes = received.hour * 60 + received.minute;
-    const cutoffMinutes = cutoff.hour * 60 + cutoff.minute;
-
-    // At or before cutoff -> +1 day. After cutoff -> +2 days.
-    const isBeforeOrAtCutoff = receivedMinutes <= cutoffMinutes;
-    const daysToAdd = isBeforeOrAtCutoff ? 1 : 2;
-
-    const receivedAnchor = buildAnchorDate(received.year, received.month, received.day);
-    const predictedDate = addDays(receivedAnchor, daysToAdd);
-
+  if (!match) {
     return {
-      cutoffLabel: formatTime12(cutoff.hour, cutoff.minute),
-      receivedLabel: received.month + '/' + received.day + '/' + received.year + ' ' + formatTime12(received.hour, received.minute),
-      ruleLabel: isBeforeOrAtCutoff ? 'Before Cutoff (+1 Day)' : 'After Cutoff (+2 Days)',
-      ruleClass: isBeforeOrAtCutoff ? 'rule-plus1' : 'rule-plus2',
-      predictedLabel: formatDate(predictedDate)
+      valid: false,
+      error: 'Enter the timestamp as M/D/YYYY H:MM AM/PM — e.g. 7/2/2026 7:36 AM.'
     };
   }
 
-  /* ============================================================
-     RENDERING
-     ============================================================ */
+  const month  = parseInt(match[1], 10);
+  const day    = parseInt(match[2], 10);
+  const year   = parseInt(match[3], 10);
+  let   hour   = parseInt(match[4], 10);
+  const minute = parseInt(match[5], 10);
+  const ampm   = match[6].toUpperCase();
 
-  // Reveals step cards progressively as prior requirements are met.
-  function revealSteps(hasCategory, hasTimezone){
-    if (hasCategory) step2Card.hidden = false;
-    if (hasTimezone) step3Card.hidden = false;
+  if (month < 1 || month > 12) {
+    return { valid: false, error: 'Month must be between 1 and 12.' };
+  }
+  if (hour < 1 || hour > 12) {
+    return { valid: false, error: 'Hour must be between 1 and 12 (12-hour clock).' };
+  }
+  if (minute < 0 || minute > 59) {
+    return { valid: false, error: 'Minutes must be between 00 and 59.' };
   }
 
-  // Updates the small numbered progress indicator at the top.
-  function updateStepper(hasCategory, hasTimezone, hasReceived){
-    const states = {
-      1: hasCategory ? 'complete' : 'active',
-      2: !hasCategory ? 'pending' : (hasTimezone ? 'complete' : 'active'),
-      3: !(hasCategory && hasTimezone) ? 'pending' : (hasReceived ? 'complete' : 'active'),
-      4: (hasCategory && hasTimezone && hasReceived) ? 'complete' : 'pending'
-    };
-    Object.keys(states).forEach(function(step){
-      stepperItems[step].dataset.state = states[step];
-    });
+  // Convert to 24-hour time for building a real Date object.
+  let hour24 = hour;
+  if (ampm === 'PM' && hour !== 12) hour24 += 12;
+  if (ampm === 'AM' && hour === 12) hour24 = 0;
+
+  const dateObj = new Date(year, month - 1, day, hour24, minute, 0, 0);
+
+  // Catch impossible calendar dates (e.g. 2/30/2026) — JS Date silently
+  // rolls these into the next month, so we detect and reject that here.
+  const rolledOver =
+    dateObj.getFullYear() !== year ||
+    dateObj.getMonth() !== month - 1 ||
+    dateObj.getDate() !== day;
+
+  if (rolledOver) {
+    return { valid: false, error: 'That is not a valid calendar date.' };
   }
 
-  // Updates the friendly checklist shown before all inputs are complete.
-  function updateValidation(hasCategory, hasTimezone, hasReceived){
-    checkCategory.dataset.done = String(hasCategory);
-    checkTimezone.dataset.done = String(hasTimezone);
-    checkReceived.dataset.done = String(hasReceived);
+  return {
+    valid: true,
+    date: dateObj,
+    timeMinutes: hour24 * 60 + minute
+  };
+}
 
-    if (hasCategory && !hasTimezone){
-      validationTitle.textContent = 'Nice — now choose a time zone.';
-    } else if (hasCategory && hasTimezone && !hasReceived){
-      validationTitle.textContent = 'Almost there — enter the received date & time.';
-    } else {
-      validationTitle.textContent = 'Complete these steps to see your prediction:';
-    }
+// Formats a Date as MM/DD/YYYY (zero-padded), per the required date format.
+function formatDate(date) {
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  return `${mm}/${dd}/${yyyy}`;
+}
+
+// Formats the time portion as a natural 12-hour clock string, e.g. "7:36 AM".
+function formatTime(date) {
+  let hour = date.getHours();
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  if (hour === 0) hour = 12;
+  return `${hour}:${minute} ${ampm}`;
+}
+
+// Returns a new Date with N days added, without mutating the original.
+function addDays(date, numDays) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + numDays);
+  return result;
+}
+
+/* =========================================================================
+   MAIN PREDICTION / RENDER PIPELINE
+   Runs on every relevant change: category, time zone, received date/time,
+   and the Dish toggle. No "Predict" button is needed.
+   ========================================================================= */
+function evaluate() {
+  const category = getCheckedValue('category');
+  const timezone = getCheckedValue('timezone');
+  const rawReceived = receivedInput.value;
+
+  // --- Step unlock states -------------------------------------------------
+  setStepState(step2El, !!category);
+  step2Hint.style.display = category ? 'none' : 'flex';
+
+  setStepState(step3El, !!category && !!timezone);
+  step3Hint.style.display = (category && timezone) ? 'none' : 'flex';
+
+  const readyForDate = !!category && !!timezone;
+
+  // If prerequisites aren't met yet, clear everything downstream and stop.
+  if (!readyForDate) {
+    hideResult();
+    return;
   }
 
-  // Plays a brief "split-flap" flip whenever the predicted date changes.
-  function flipToValue(element, newValue){
-    if (element.textContent === newValue) return;
-    element.classList.remove('flip-anim');
-    void element.offsetWidth; // restart animation
-    element.textContent = newValue;
-    element.classList.add('flip-anim');
+  // --- Parse the received date/time --------------------------------------
+  const parsed = parseReceivedDateTime(rawReceived);
+
+  if (!rawReceived.trim()) {
+    dateError.classList.remove('show');
+    receivedInput.classList.remove('has-error');
+    hideResult();
+    return;
   }
 
-  // Paints the result board with a computed prediction.
-  function renderResult(category, timezone, prediction){
-    outCategory.textContent = category;
-    outTimezone.textContent = timezone;
-    outReceived.textContent = prediction.receivedLabel;
-    outCutoff.textContent = prediction.cutoffLabel;
-
-    outRule.innerHTML = '';
-    const rulePill = document.createElement('span');
-    rulePill.className = 'rule-pill ' + prediction.ruleClass;
-    rulePill.textContent = prediction.ruleLabel;
-    outRule.appendChild(rulePill);
-
-    flipToValue(outPredicted, prediction.predictedLabel);
+  if (!parsed.valid) {
+    dateError.textContent = parsed.error;
+    dateError.classList.add('show');
+    receivedInput.classList.add('has-error');
+    hideResult();
+    return;
   }
 
-  /* ============================================================
-     MAIN UPDATE LOOP
-     Re-runs on every relevant input change; no submit button.
-     ============================================================ */
-  function update(){
-    const category = getSelectedValue('category');
-    const timezone = getSelectedValue('timezone');
-    const received = parseDateTimeLocal(receivedInput.value);
+  // Valid input — clear any previous error state.
+  dateError.classList.remove('show');
+  receivedInput.classList.remove('has-error');
 
-    const hasCategory = Boolean(category);
-    const hasTimezone = Boolean(timezone);
-    const hasReceived = Boolean(received);
-    const isComplete = hasCategory && hasTimezone && hasReceived;
+  // --- Business logic ------------------------------------------------------
+  const cutoffStr = CUTOFF_TIMES[category][timezone];
+  const cutoffMinutes = timeStringToMinutes(cutoffStr);
+  const isDish = dishCheckbox.checked;
 
-    revealSteps(hasCategory, hasTimezone);
-    updateStepper(hasCategory, hasTimezone, hasReceived);
-    updateValidation(hasCategory, hasTimezone, hasReceived);
+  // Before or exactly at cutoff -> +1 day. After cutoff -> +2 days.
+  const isOnTime = parsed.timeMinutes <= cutoffMinutes;
+  let daysToAdd = isOnTime ? 1 : 2;
+  let ruleLabel = isOnTime ? 'Before Cutoff (+1 Day)' : 'After Cutoff (+2 Days)';
 
-    validationPanel.hidden = isComplete;
-    resultBoard.hidden = !isComplete;
-
-    if (isComplete){
-      const prediction = computePrediction(category, timezone, received);
-      renderResult(category, timezone, prediction);
-    }
+  if (isDish) {
+    daysToAdd += 1;
   }
 
-  /* ============================================================
-     RESET
-     ============================================================ */
-  function resetAll(){
-    document.querySelectorAll('input[type="radio"]').forEach(function(input){
-      input.checked = false;
-    });
-    receivedInput.value = '';
-    step2Card.hidden = true;
-    step3Card.hidden = true;
-    update();
+  const predictedDate = addDays(parsed.date, daysToAdd);
+
+  // --- Render --------------------------------------------------------------
+  outCategory.textContent = category;
+  outTimezone.textContent = timezone;
+  outReceived.textContent = `${formatDate(parsed.date)} ${formatTime(parsed.date)}`;
+  outCutoff.textContent = cutoffStr;
+  outRule.textContent = ruleLabel;
+  outDishTag.style.display = isDish ? 'inline-block' : 'none';
+  outPredicted.textContent = formatDate(predictedDate);
+
+  readout.classList.toggle('late', !isOnTime);
+  readout.classList.add('show');
+  step4Hint.style.display = 'none';
+  setStepState(step4El, true);
+}
+
+// Toggles a step panel between locked and active/complete visual states.
+function setStepState(stepEl, isUnlocked) {
+  if (isUnlocked) {
+    stepEl.classList.add('is-active');
+  } else {
+    stepEl.classList.remove('is-active', 'is-complete');
   }
+}
 
-  /* ============================================================
-     EVENT WIRING
-     ============================================================ */
-  document.getElementById('categoryGroup').addEventListener('change', update);
-  document.getElementById('timezoneGroup').addEventListener('change', update);
-  receivedInput.addEventListener('input', update);
-  receivedInput.addEventListener('change', update);
-  resetBtn.addEventListener('click', resetAll);
+// Resets the Step 4 readout back to its empty/locked state.
+function hideResult() {
+  readout.classList.remove('show', 'late');
+  step4Hint.style.display = 'flex';
+  step4Hint.textContent = 'Complete the fields above to see the prediction.';
+  setStepState(step4El, false);
+}
 
-  // Initial paint.
-  update();
+/* =========================================================================
+   EVENT WIRING
+   Every field that can influence the prediction re-runs evaluate().
+   ========================================================================= */
+document.querySelectorAll('input[name="category"]').forEach(el =>
+  el.addEventListener('change', evaluate)
+);
+document.querySelectorAll('input[name="timezone"]').forEach(el =>
+  el.addEventListener('change', evaluate)
+);
+receivedInput.addEventListener('input', evaluate);   // fires on typing AND paste
+receivedInput.addEventListener('paste', () => setTimeout(evaluate, 0));
+dishCheckbox.addEventListener('change', evaluate);
 
-})();
+// Initial pass in case the browser autofills any fields on load.
+evaluate();
 </script>
-
 </body>
 </html>
