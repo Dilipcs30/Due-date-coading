@@ -5,280 +5,227 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Processing Date Predictor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink:        #12181F;
-    --panel:      #1B232C;
-    --panel-2:    #202B36;
-    --line:       #2C3846;
-    --text:       #E9EDF1;
-    --muted:      #7F8FA0;
-    --muted-dim:  #56606C;
-    --teal:       #3FB39A;
-    --teal-dim:   rgba(63, 179, 154, 0.14);
-    --amber:      #E8A23B;
-    --amber-dim:  rgba(232, 162, 59, 0.14);
-    --rust:       #DC6B4B;
-    --rust-dim:   rgba(220, 107, 75, 0.14);
-    --radius:     10px;
-    --font-display: 'Oswald', sans-serif;
-    --font-body:    'Inter', sans-serif;
-    --font-mono:    'JetBrains Mono', monospace;
+  /* ============================================================
+     DESIGN TOKENS
+     ============================================================ */
+  :root{
+    --bg: #EDEFF7;
+    --surface: #FFFFFF;
+    --surface-2: #F7F8FC;
+    --border: #E1E4EF;
+    --ink: #171B26;
+    --ink-2: #5B6274;
+    --ink-3: #9498A8;
+
+    --accent: #3B4FE0;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E8EAFC;
+
+    --good: #12805A;
+    --good-soft: #E1F3EA;
+
+    --warn: #B2560A;
+    --warn-soft: #FBEDE0;
+
+    --dish: #7C3AED;
+    --dish-soft: #F1EBFD;
+
+    --danger: #C4341F;
+    --danger-soft: #FBEAE7;
+
+    --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+    --radius: 14px;
+    --radius-sm: 9px;
+    --shadow-card: 0 1px 2px rgba(23,27,38,0.04), 0 8px 24px -8px rgba(23,27,38,0.10);
   }
 
-  * { box-sizing: border-box; }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  }
 
-  body {
+  *,*::before,*::after{ box-sizing: border-box; }
+
+  html,body{ height: 100%; }
+
+  body{
     margin: 0;
-    min-height: 100vh;
-    background:
-      radial-gradient(circle at 12% -10%, rgba(63,179,154,0.08), transparent 45%),
-      radial-gradient(circle at 88% 110%, rgba(232,162,59,0.06), transparent 45%),
-      var(--ink);
-    color: var(--text);
     font-family: var(--font-body);
-    padding: 48px 20px 80px;
-    line-height: 1.5;
-  }
-
-  .wrap {
-    max-width: 680px;
-    margin: 0 auto;
-  }
-
-  /* ---------- Header ---------- */
-  .masthead {
-    margin-bottom: 32px;
-  }
-  .eyebrow {
+    color: var(--ink);
+    background:
+      radial-gradient(700px 420px at 85% -8%, rgba(59,79,224,0.10), transparent 60%),
+      radial-gradient(600px 380px at -10% 10%, rgba(124,58,237,0.07), transparent 55%),
+      var(--bg);
+    min-height: 100%;
+    padding: 48px 20px 72px;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    justify-content: center;
+  }
+
+  .app{
+    width: 100%;
+    max-width: 620px;
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  .app-header{
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .app-header .eyebrow{
     font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .eyebrow .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--teal);
-    box-shadow: 0 0 0 3px var(--teal-dim);
-    animation: pulse 2.2s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .eyebrow .dot { animation: none; }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
-  }
-  h1 {
-    font-family: var(--font-display);
+    color: var(--accent);
     font-weight: 600;
-    font-size: 30px;
-    letter-spacing: 0.01em;
     margin: 0 0 8px;
   }
-  .masthead p {
+  .app-header h1{
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .app-header p{
     margin: 0;
-    color: var(--muted);
+    color: var(--ink-2);
     font-size: 14.5px;
-    max-width: 50ch;
+    line-height: 1.5;
+    max-width: 46ch;
   }
 
-  /* ---------- Step chain ---------- */
-  .chain {
+  /* ============================================================
+     STEP RAIL (signature element — a real 4-stage sequence)
+     ============================================================ */
+  .step-rail{
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0 0 28px;
+    padding: 0;
     position: relative;
   }
-  .step {
-    position: relative;
-    display: flex;
-    gap: 18px;
-    padding-bottom: 28px;
+  .step-rail::before{
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: calc(12.5% + 2px);
+    right: calc(12.5% + 2px);
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
   }
-  .step:last-child { padding-bottom: 0; }
-
-  .rail {
-    flex: 0 0 auto;
+  .step-rail li{
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 40px;
-  }
-  .rail-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: var(--ink);
-    background: var(--muted);
-    border-radius: 5px;
-    padding: 4px 0;
-    width: 40px;
     text-align: center;
-    transition: background 0.25s ease, color 0.25s ease;
-  }
-  .step.is-active .rail-tag,
-  .step.is-complete .rail-tag {
-    background: var(--teal);
-  }
-  .rail-line {
-    flex: 1;
-    width: 2px;
-    background: var(--line);
-    margin-top: 8px;
-    border-radius: 2px;
-  }
-  .step:last-child .rail-line { display: none; }
-
-  .panel {
-    flex: 1;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 20px 22px;
-    opacity: 0.45;
-    filter: grayscale(0.4);
-    pointer-events: none;
-    transform: translateY(0);
-    transition: opacity 0.35s ease, filter 0.35s ease;
-  }
-  .step.is-active .panel,
-  .step.is-complete .panel {
-    opacity: 1;
-    filter: none;
-    pointer-events: auto;
-  }
-  .step.is-active .panel {
-    border-color: rgba(63, 179, 154, 0.4);
-  }
-
-  .panel h2 {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    margin: 0 0 4px;
-    color: var(--text);
-  }
-  .panel .sub {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 0 0 16px;
-  }
-
-  /* ---------- Segmented radio controls ---------- */
-  .segmented {
-    display: flex;
-    flex-wrap: wrap;
     gap: 8px;
   }
-  .segmented input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .segmented label {
+  .step-rail .dot{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--ink-3);
     font-family: var(--font-mono);
+    font-weight: 600;
     font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    color: var(--muted);
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    padding: 9px 16px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-  }
-  .segmented label:hover {
-    border-color: var(--muted-dim);
-    color: var(--text);
-  }
-  .segmented input:checked + label {
-    background: var(--teal-dim);
-    border-color: var(--teal);
-    color: var(--teal);
-  }
-  .segmented input:focus-visible + label {
-    outline: 2px solid var(--teal);
-    outline-offset: 2px;
-  }
-
-  /* ---------- Text / datetime input ---------- */
-  .field {
-    margin-top: 2px;
-  }
-  .field label.field-label {
-    display: block;
-    font-size: 12.5px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  input[type="text"].dt-input {
-    width: 100%;
-    font-family: var(--font-mono);
-    font-size: 15px;
-    color: var(--text);
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    padding: 11px 14px;
-    transition: border-color 0.15s ease;
-  }
-  input[type="text"].dt-input:focus {
-    outline: none;
-    border-color: var(--teal);
-  }
-  input[type="text"].dt-input.has-error {
-    border-color: var(--rust);
-  }
-  .format-hint {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--muted-dim);
-    margin: 8px 0 0;
-  }
-
-  /* ---------- Dish toggle ---------- */
-  .dish-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--line);
+    justify-content: center;
+    transition: all 0.25s ease;
   }
-  .dish-copy { font-size: 13px; }
-  .dish-copy strong {
-    display: block;
+  .step-rail .label{
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: color 0.25s ease;
+  }
+  .step-rail li.is-active .dot{
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .step-rail li.is-active .label{ color: var(--accent); }
+  .step-rail li.is-complete .dot{
+    background: var(--good);
+    border-color: var(--good);
+    color: #fff;
+  }
+  .step-rail li.is-complete .label{ color: var(--good); }
+
+  /* ============================================================
+     STEP CARDS + PROGRESSIVE REVEAL
+     ============================================================ */
+  .step-wrapper{
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.4s ease, opacity 0.35s ease, margin 0.4s ease;
+    margin-bottom: 0;
+  }
+  .step-wrapper > .step-inner{ overflow: hidden; min-height: 0; }
+  .step-wrapper.revealed{
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-bottom: 16px;
+  }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 22px 22px 24px;
+  }
+
+  fieldset{ border: 0; margin: 0; padding: 0; }
+  legend{
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  legend .step-num{
     font-family: var(--font-mono);
     font-size: 12px;
-    letter-spacing: 0.05em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 2px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
   }
-  .dish-copy span { color: var(--muted); }
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-    flex: 0 0 auto;
+  /* ---- pill radio buttons ---- */
+  .pill-group{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .switch input {
+  .pill{
+    position: relative;
+  }
+  .pill input{
     position: absolute;
     opacity: 0;
     width: 100%;
@@ -286,558 +233,767 @@
     margin: 0;
     cursor: pointer;
   }
-  .switch .track {
-    position: absolute;
-    inset: 0;
-    background: var(--panel-2);
-    border: 1px solid var(--line);
+  .pill span{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
     border-radius: 999px;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    background: var(--surface-2);
+    color: var(--ink-2);
+    font-weight: 600;
+    font-size: 13.5px;
+    letter-spacing: 0.01em;
+    transition: all 0.15s ease;
+    user-select: none;
   }
-  .switch .thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
+  .pill span::before{
+    content: "";
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--muted);
-    transition: transform 0.2s ease, background 0.2s ease;
+    background: var(--border);
+    transition: all 0.15s ease;
+    flex: none;
   }
-  .switch input:checked ~ .track {
-    background: var(--amber-dim);
-    border-color: var(--amber);
+  .pill input:checked + span{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
   }
-  .switch input:checked ~ .thumb {
-    transform: translateX(20px);
-    background: var(--amber);
+  .pill input:checked + span::before{
+    background: var(--accent-ink);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.35);
   }
-  .switch input:focus-visible ~ .track {
-    outline: 2px solid var(--amber);
+  .pill input:focus-visible + span{
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+  .pill:hover span{ border-color: var(--accent); color: var(--ink); }
 
-  /* ---------- Validation hints ---------- */
-  .hint {
-    font-size: 13px;
-    color: var(--muted-dim);
-    margin: 14px 0 0;
+  /* ---- field for step 3 ---- */
+  .field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .field label{
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .field .hint{
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+  }
+  .field input[type="date"],
+  .field input[type="text"]{
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface-2);
+    color: var(--ink);
+    width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input:focus{
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    background: var(--surface);
+  }
+  .field input.is-invalid{
+    border-color: var(--danger);
+    background: var(--danger-soft);
+  }
+  .field-error{
+    font-size: 12px;
+    color: var(--danger);
+    display: none;
+  }
+  .field-error.show{ display: block; }
+
+  /* ---- dish checkbox ---- */
+  .dish-row{
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .check{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .check input{
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    accent-color: var(--dish);
+    cursor: pointer;
+    flex: none;
+  }
+  .check .check-text strong{
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .check .check-text span{
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    margin-top: 2px;
+  }
+
+  /* ============================================================
+     VALIDATION MESSAGE
+     ============================================================ */
+  .status-msg{
     display: flex;
     align-items: center;
-    gap: 6px;
-  }
-  .hint::before {
-    content: "→";
-    color: var(--muted-dim);
-  }
-  .error-msg {
-    font-size: 13px;
-    color: var(--rust);
-    margin: 10px 0 0;
-    display: none;
-  }
-  .error-msg.show { display: block; }
-
-  /* ---------- Result readout ---------- */
-  .readout {
-    display: none;
-    border-left: 3px solid var(--teal);
-    background: var(--panel-2);
-    border-radius: 0 8px 8px 0;
-    padding: 4px 20px 18px;
-    animation: rise 0.35s ease;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .readout { animation: none; }
-  }
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .readout.show { display: block; }
-  .readout.late { border-left-color: var(--rust); }
-
-  .readout-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px 20px;
-    margin-top: 18px;
-  }
-  .readout-item.full { grid-column: 1 / -1; }
-  .readout-item .k {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-  .readout-item .v {
-    font-family: var(--font-mono);
-    font-size: 15px;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--ink-2);
+    font-size: 13.5px;
     font-weight: 500;
-    color: var(--text);
+    margin-bottom: 16px;
   }
-  .rule-tag {
-    display: inline-block;
+  .status-msg .dot-icon{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    flex: none;
+  }
+  .status-msg.hidden{ display: none; }
+
+  /* ============================================================
+     RESULT CARD
+     ============================================================ */
+  .result-card{
+    padding: 0;
+    overflow: hidden;
+  }
+  .rule-ribbon{
+    padding: 12px 22px;
     font-family: var(--font-mono);
     font-size: 12.5px;
     font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 5px;
-    background: var(--teal-dim);
-    color: var(--teal);
-  }
-  .readout.late .rule-tag {
-    background: var(--rust-dim);
-    color: var(--rust);
-  }
-  .dish-tag {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 5px;
-    background: var(--amber-dim);
-    color: var(--amber);
-    margin-left: 6px;
-  }
-
-  .predicted-block {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--line);
-  }
-  .predicted-block .k {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .predicted-date {
-    font-family: var(--font-mono);
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--teal);
     letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--good-soft);
+    color: var(--good);
+    border-bottom: 1px solid var(--border);
   }
-  .readout.late .predicted-date { color: var(--rust); }
+  .rule-ribbon.after{ background: var(--warn-soft); color: var(--warn); }
+  .rule-ribbon .badge-dish,
+  .rule-ribbon .badge-weekend{
+    background: var(--dish);
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+  }
+  .rule-ribbon .badge-dish{ margin-left: auto; }
+  .rule-ribbon .badge-weekend{
+    background: var(--accent);
+    margin-left: auto;
+  }
+  .rule-ribbon .badge-dish + .badge-weekend,
+  .rule-ribbon .badge-weekend + .badge-dish{
+    margin-left: 0;
+  }
 
-  footer {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 11.5px;
-    color: var(--muted-dim);
+  .result-body{ padding: 22px; }
+
+  .summary-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 18px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 480px){
+    .summary-grid{ grid-template-columns: 1fr; }
+  }
+  .summary-item .k{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .summary-item .v{
     font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .predicted-block{
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .predicted-block .k{
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .predicted-block .predicted-date{
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  .predicted-block .predicted-date-list{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .predicted-block .date-chip{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    text-align: center;
+    min-width: 84px;
+  }
+  .predicted-block .date-chip .day{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-3);
+    font-weight: 700;
+    margin: 0 0 3px;
+  }
+  .predicted-block .date-chip .date{
+    font-family: var(--font-mono);
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .predicted-block .date-chip.is-final{
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .predicted-block .date-chip.is-final .day{ color: var(--accent); }
+  .predicted-block .date-chip.is-final .date{
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .predicted-alert{
+    margin-top: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--warn-soft);
+    color: var(--warn);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .predicted-alert .alert-icon{ flex: none; font-size: 14px; line-height: 1.3; }
+
+  footer.note{
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--ink-3);
+    text-align: center;
+    line-height: 1.6;
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="masthead">
-    <div class="eyebrow"><span class="dot"></span> Traffic Processing System</div>
+<div class="app">
+
+  <header class="app-header">
+    <p class="eyebrow">Cutoff-Based Scheduling</p>
     <h1>Processing Date Predictor</h1>
-    <p>Set the category, time zone and received timestamp — the predicted processing date recalculates automatically as each field changes.</p>
+    <p>Pick a category and time zone, drop in when the item was received, and the predicted processing date updates instantly against the correct cutoff rule.</p>
+  </header>
+
+  <!-- Visual progress rail: purely reflects state, updated by JS -->
+  <ol class="step-rail" id="stepRail">
+    <li data-step="1"><span class="dot">1</span><span class="label">Category</span></li>
+    <li data-step="2"><span class="dot">2</span><span class="label">Time Zone</span></li>
+    <li data-step="3"><span class="dot">3</span><span class="label">Received</span></li>
+    <li data-step="4"><span class="dot">4</span><span class="label">Result</span></li>
+  </ol>
+
+  <!-- STEP 1: CATEGORY -->
+  <div class="step-wrapper revealed" id="wrap-1">
+    <div class="step-inner">
+      <div class="card">
+        <fieldset id="fieldset-category">
+          <legend><span class="step-num">1</span>Category</legend>
+          <div class="pill-group" role="radiogroup" aria-label="Category">
+            <label class="pill">
+              <input type="radio" name="category" value="AMPERSAND">
+              <span>Ampersand</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="category" value="POLITICAL">
+              <span>Political</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="category" value="DIGITAL">
+              <span>Digital</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+    </div>
   </div>
 
-  <div class="chain">
-
-    <!-- STEP 1: CATEGORY -->
-    <div class="step is-active" id="step1">
-      <div class="rail">
-        <div class="rail-tag">01</div>
-        <div class="rail-line"></div>
-      </div>
-      <div class="panel">
-        <h2>Category</h2>
-        <p class="sub">Choose the traffic category this item belongs to.</p>
-        <div class="segmented" id="categoryGroup">
-          <input type="radio" name="category" id="cat-ampersand" value="AMPERSAND">
-          <label for="cat-ampersand">AMPERSAND</label>
-
-          <input type="radio" name="category" id="cat-political" value="POLITICAL">
-          <label for="cat-political">POLITICAL</label>
-
-          <input type="radio" name="category" id="cat-digital" value="DIGITAL">
-          <label for="cat-digital">DIGITAL</label>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 2: TIME ZONE -->
-    <div class="step" id="step2">
-      <div class="rail">
-        <div class="rail-tag">02</div>
-        <div class="rail-line"></div>
-      </div>
-      <div class="panel">
-        <h2>Time Zone</h2>
-        <p class="sub">Determines which cutoff time applies.</p>
-        <div class="segmented" id="timezoneGroup">
-          <input type="radio" name="timezone" id="tz-est" value="EST">
-          <label for="tz-est">EST</label>
-
-          <input type="radio" name="timezone" id="tz-cst" value="CST">
-          <label for="tz-cst">CST</label>
-
-          <input type="radio" name="timezone" id="tz-mst" value="MST">
-          <label for="tz-mst">MST</label>
-
-          <input type="radio" name="timezone" id="tz-pst" value="PST">
-          <label for="tz-pst">PST</label>
-        </div>
-        <p class="hint" id="step2Hint">Select a category to unlock time zone options.</p>
-      </div>
-    </div>
-
-    <!-- STEP 3: RECEIVED DATE & TIME -->
-    <div class="step" id="step3">
-      <div class="rail">
-        <div class="rail-tag">03</div>
-        <div class="rail-line"></div>
-      </div>
-      <div class="panel">
-        <h2>Received Date &amp; Time</h2>
-        <p class="sub">Paste or type the received timestamp — no picker required.</p>
-        <div class="field">
-          <label class="field-label" for="receivedInput">Received timestamp</label>
-          <input type="text" class="dt-input" id="receivedInput" placeholder="M/D/YYYY H:MM AM/PM  e.g. 7/2/2026 7:36 AM" autocomplete="off" spellcheck="false">
-          <p class="format-hint">Format: M/D/YYYY H:MM AM/PM — supports copy-paste directly into the field.</p>
-          <p class="error-msg" id="dateError"></p>
-        </div>
-
-        <div class="dish-row">
-          <div class="dish-copy">
-            <strong>Dish Routing</strong>
-            <span>Adds one additional processing day when enabled.</span>
+  <!-- STEP 2: TIME ZONE (revealed after category is chosen) -->
+  <div class="step-wrapper" id="wrap-2">
+    <div class="step-inner">
+      <div class="card">
+        <fieldset id="fieldset-timezone">
+          <legend><span class="step-num">2</span>Time Zone</legend>
+          <div class="pill-group" role="radiogroup" aria-label="Time zone">
+            <label class="pill">
+              <input type="radio" name="timezone" value="EST">
+              <span>EST</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="timezone" value="CST">
+              <span>CST</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="timezone" value="MST">
+              <span>MST</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="timezone" value="PST">
+              <span>PST</span>
+            </label>
           </div>
-          <label class="switch">
-            <input type="checkbox" id="dishCheckbox">
-            <span class="track"></span>
-            <span class="thumb"></span>
-          </label>
-        </div>
-
-        <p class="hint" id="step3Hint">Select a time zone to unlock this field.</p>
+        </fieldset>
       </div>
     </div>
+  </div>
 
-    <!-- STEP 4: RESULT -->
-    <div class="step" id="step4">
-      <div class="rail">
-        <div class="rail-tag">04</div>
-      </div>
-      <div class="panel">
-        <h2>Result</h2>
-        <p class="sub">Updates automatically — no button required.</p>
+  <!-- STEP 3: RECEIVED DATE & TIME (revealed after time zone is chosen) -->
+  <div class="step-wrapper" id="wrap-3">
+    <div class="step-inner">
+      <div class="card">
+        <fieldset>
+          <legend><span class="step-num">3</span>Received Date &amp; Time</legend>
 
-        <p class="hint" id="step4Hint">Complete the fields above to see the prediction.</p>
-
-        <div class="readout" id="readout">
-          <div class="readout-grid">
-            <div class="readout-item">
-              <div class="k">Category</div>
-              <div class="v" id="outCategory">—</div>
-            </div>
-            <div class="readout-item">
-              <div class="k">Time Zone</div>
-              <div class="v" id="outTimezone">—</div>
-            </div>
-            <div class="readout-item">
-              <div class="k">Received</div>
-              <div class="v" id="outReceived">—</div>
-            </div>
-            <div class="readout-item">
-              <div class="k">Cutoff</div>
-              <div class="v" id="outCutoff">—</div>
-            </div>
-            <div class="readout-item full">
-              <div class="k">Rule Applied</div>
-              <div class="v">
-                <span class="rule-tag" id="outRule">—</span>
-                <span class="dish-tag" id="outDishTag" style="display:none;">DISH +1</span>
-              </div>
-            </div>
+          <div class="field">
+            <label for="receivedDateTime">Received date &amp; time <span class="hint">(paste or type)</span></label>
+            <input type="text" id="receivedDateTime" placeholder="e.g. 7/6/2026 3:47 PM" autocomplete="off" spellcheck="false">
+            <span class="field-error" id="dateTimeError">Enter it as M/D/YYYY H:MM AM/PM, e.g. 7/6/2026 3:47 PM.</span>
           </div>
 
+          <div class="dish-row">
+            <label class="check">
+              <input type="checkbox" id="dishCheckbox">
+              <span class="check-text">
+                <strong>This is a Dish shipment</strong>
+                <span>Adds one extra processing day on top of the standard rule, regardless of category.</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation / guidance message -->
+  <div class="status-msg" id="statusMsg">
+    <span class="dot-icon"></span>
+    <span id="statusText">Select a category to get started.</span>
+  </div>
+
+  <!-- STEP 4: RESULT (revealed only once everything is valid) -->
+  <div class="step-wrapper" id="wrap-4">
+    <div class="step-inner">
+      <div class="card result-card">
+        <div class="rule-ribbon" id="ruleRibbon">
+          <span id="ruleRibbonText">Rule applied</span>
+          <span class="badge-weekend" id="weekendBadge" style="display:none;">Friday · Weekend skipped</span>
+          <span class="badge-dish" id="dishBadge" style="display:none;">+1 Day · Dish</span>
+        </div>
+        <div class="result-body">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <p class="k">Category</p>
+              <p class="v" id="sumCategory">—</p>
+            </div>
+            <div class="summary-item">
+              <p class="k">Time zone</p>
+              <p class="v" id="sumTimezone">—</p>
+            </div>
+            <div class="summary-item">
+              <p class="k">Received</p>
+              <p class="v" id="sumReceived">—</p>
+            </div>
+            <div class="summary-item">
+              <p class="k">Cutoff</p>
+              <p class="v" id="sumCutoff">—</p>
+            </div>
+            <div class="summary-item">
+              <p class="k">Dish shipment</p>
+              <p class="v" id="sumDish">—</p>
+            </div>
+            <div class="summary-item">
+              <p class="k">Rule applied</p>
+              <p class="v" id="sumRule">—</p>
+            </div>
+          </div>
           <div class="predicted-block">
-            <div class="k">Predicted Processing Date</div>
-            <div class="predicted-date" id="outPredicted">—</div>
+            <p class="k">Predicted processing date</p>
+            <p class="predicted-date" id="predictedDate">—</p>
+            <div class="predicted-date-list" id="predictedDateList" style="display:none;"></div>
+          </div>
+          <div class="predicted-alert" id="predictedAlert">
+            <span class="alert-icon" aria-hidden="true">&#9888;</span>
+            <span>Check your instruction and apply correct due date</span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
-  <footer>All computations run locally in your browser — nothing is sent anywhere.</footer>
+  <footer class="note">All cutoff times are compared to the clock time you enter — no automatic time zone conversion is applied.</footer>
+
 </div>
 
 <script>
-/* =========================================================================
-   CONFIGURATION
-   Cutoff times are stored in one place so the business rules never need
-   to be hardcoded anywhere else in the code.
-   ========================================================================= */
-const CUTOFF_TIMES = {
-  AMPERSAND: { EST: '10:05 AM', CST: '11:05 AM', MST: '12:05 PM', PST: '1:05 PM' },
-  POLITICAL: { EST: '2:05 PM',  CST: '3:05 PM',  MST: '4:05 PM',  PST: '5:05 PM' },
-  DIGITAL:   { EST: '1:05 PM',  CST: '2:05 PM',  MST: '3:05 PM',  PST: '4:05 PM' }
+/* ================================================================
+   CUTOFF TABLE
+   Single source of truth for every category/time-zone cutoff.
+   Stored as 24-hour [hour, minute] pairs so both the comparison
+   logic and the display label are derived from one place.
+   ================================================================ */
+const CUTOFFS = {
+  AMPERSAND: { EST: [10, 5], CST: [11, 5], MST: [12, 5], PST: [13, 5] },
+  POLITICAL: { EST: [14, 5], CST: [15, 5], MST: [16, 5], PST: [17, 5] },
+  DIGITAL:   { EST: [13, 5], CST: [14, 5], MST: [15, 5], PST: [16, 5] },
 };
 
-/* =========================================================================
-   ELEMENT REFERENCES
-   ========================================================================= */
-const step2El   = document.getElementById('step2');
-const step3El   = document.getElementById('step3');
-const step4El   = document.getElementById('step4');
+/* ================================================================
+   DOM REFERENCES
+   ================================================================ */
+const el = {
+  categoryInputs: document.querySelectorAll('input[name="category"]'),
+  timezoneInputs: document.querySelectorAll('input[name="timezone"]'),
+  dateTimeInput: document.getElementById('receivedDateTime'),
+  dateTimeError: document.getElementById('dateTimeError'),
+  dishCheckbox: document.getElementById('dishCheckbox'),
 
-const step2Hint = document.getElementById('step2Hint');
-const step3Hint = document.getElementById('step3Hint');
-const step4Hint = document.getElementById('step4Hint');
+  wrap2: document.getElementById('wrap-2'),
+  wrap3: document.getElementById('wrap-3'),
+  wrap4: document.getElementById('wrap-4'),
 
-const receivedInput = document.getElementById('receivedInput');
-const dishCheckbox   = document.getElementById('dishCheckbox');
-const dateError       = document.getElementById('dateError');
+  statusMsg: document.getElementById('statusMsg'),
+  statusText: document.getElementById('statusText'),
 
-const readout        = document.getElementById('readout');
-const outCategory     = document.getElementById('outCategory');
-const outTimezone     = document.getElementById('outTimezone');
-const outReceived     = document.getElementById('outReceived');
-const outCutoff       = document.getElementById('outCutoff');
-const outRule         = document.getElementById('outRule');
-const outDishTag      = document.getElementById('outDishTag');
-const outPredicted    = document.getElementById('outPredicted');
+  ruleRibbon: document.getElementById('ruleRibbon'),
+  ruleRibbonText: document.getElementById('ruleRibbonText'),
+  weekendBadge: document.getElementById('weekendBadge'),
+  dishBadge: document.getElementById('dishBadge'),
 
-/* =========================================================================
-   HELPERS
-   ========================================================================= */
+  sumCategory: document.getElementById('sumCategory'),
+  sumTimezone: document.getElementById('sumTimezone'),
+  sumReceived: document.getElementById('sumReceived'),
+  sumCutoff: document.getElementById('sumCutoff'),
+  sumDish: document.getElementById('sumDish'),
+  sumRule: document.getElementById('sumRule'),
+  predictedDate: document.getElementById('predictedDate'),
+  predictedDateList: document.getElementById('predictedDateList'),
 
-// Returns the currently checked radio value for a given input name, or null.
-function getCheckedValue(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : null;
+  stepRail: document.querySelectorAll('#stepRail li'),
+};
+
+/* ================================================================
+   HELPER FUNCTIONS (each one reusable, each concern isolated)
+   ================================================================ */
+
+// Read the currently checked value from a radio NodeList, or null.
+function getCheckedValue(radioList) {
+  for (const input of radioList) {
+    if (input.checked) return input.value;
+  }
+  return null;
 }
 
-// Converts a "H:MM AM/PM" style time string into minutes since midnight.
-// Used both for cutoff times and for the parsed received time, so the
-// comparison logic only ever has to deal with plain numbers.
-function timeStringToMinutes(timeStr) {
-  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+// Parse "H:MM AM/PM" (paste-friendly, 1-2 digit hour/minute, case-insensitive)
+// into 24-hour { hour, minute }. Returns null if the text doesn't match.
+function parseTime12(text) {
+  const match = text.trim().match(/^(\d{1,2}):(\d{1,2})\s*([APap][Mm])$/);
   if (!match) return null;
 
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
-  const ampm = match[3].toUpperCase();
+  const meridiem = match[3].toUpperCase();
 
-  if (ampm === 'PM' && hour !== 12) hour += 12;
-  if (ampm === 'AM' && hour === 12) hour = 0;
+  if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
 
-  return hour * 60 + minute;
+  if (meridiem === 'AM') hour = (hour === 12) ? 0 : hour;
+  else hour = (hour === 12) ? 12 : hour + 12;
+
+  return { hour, minute };
 }
 
-// Parses the free-typed / pasted "M/D/YYYY H:MM AM/PM" received timestamp.
-// Returns { valid: true, date, timeMinutes } on success, or
-// { valid: false, error } with a friendly message on failure.
-function parseReceivedDateTime(rawValue) {
-  const value = rawValue.trim();
-
-  if (!value) {
-    return { valid: false, error: '' }; // empty is not an "error", just incomplete
-  }
-
-  const pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})\s*([AP]M)$/i;
-  const match = value.match(pattern);
-
-  if (!match) {
-    return {
-      valid: false,
-      error: 'Enter the timestamp as M/D/YYYY H:MM AM/PM — e.g. 7/2/2026 7:36 AM.'
-    };
-  }
-
-  const month  = parseInt(match[1], 10);
-  const day    = parseInt(match[2], 10);
-  const year   = parseInt(match[3], 10);
-  let   hour   = parseInt(match[4], 10);
-  const minute = parseInt(match[5], 10);
-  const ampm   = match[6].toUpperCase();
-
-  if (month < 1 || month > 12) {
-    return { valid: false, error: 'Month must be between 1 and 12.' };
-  }
-  if (hour < 1 || hour > 12) {
-    return { valid: false, error: 'Hour must be between 1 and 12 (12-hour clock).' };
-  }
-  if (minute < 0 || minute > 59) {
-    return { valid: false, error: 'Minutes must be between 00 and 59.' };
-  }
-
-  // Convert to 24-hour time for building a real Date object.
-  let hour24 = hour;
-  if (ampm === 'PM' && hour !== 12) hour24 += 12;
-  if (ampm === 'AM' && hour === 12) hour24 = 0;
-
-  const dateObj = new Date(year, month - 1, day, hour24, minute, 0, 0);
-
-  // Catch impossible calendar dates (e.g. 2/30/2026) — JS Date silently
-  // rolls these into the next month, so we detect and reject that here.
-  const rolledOver =
-    dateObj.getFullYear() !== year ||
-    dateObj.getMonth() !== month - 1 ||
-    dateObj.getDate() !== day;
-
-  if (rolledOver) {
-    return { valid: false, error: 'That is not a valid calendar date.' };
-  }
-
-  return {
-    valid: true,
-    date: dateObj,
-    timeMinutes: hour24 * 60 + minute
-  };
+// Format 24-hour hour/minute back into a clean "H:MM AM/PM" string.
+function formatTime12(hour, minute) {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  let h = hour % 12;
+  if (h === 0) h = 12;
+  return `${h}:${String(minute).padStart(2, '0')} ${period}`;
 }
 
-// Formats a Date as MM/DD/YYYY (zero-padded), per the required date format.
-function formatDate(date) {
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const yyyy = date.getFullYear();
-  return `${mm}/${dd}/${yyyy}`;
+// Parse a single pasted "M/D/YYYY H:MM AM/PM" string (flexible digit
+// widths, case-insensitive AM/PM, e.g. "7/6/2026 3:47 PM") into a local
+// Date (midnight) plus the parsed hour/minute. Reuses parseTime12 for the
+// time portion so the time-parsing rules only live in one place.
+function parseDateTime(text) {
+  const match = text.trim().match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{1,2})\s*([APap][Mm])$/
+  );
+  if (!match) return null;
+
+  const month = parseInt(match[1], 10);
+  const day = parseInt(match[2], 10);
+  const year = parseInt(match[3], 10);
+  const time = parseTime12(`${match[4]}:${match[5]} ${match[6]}`);
+  if (!time || month < 1 || month > 12 || day < 1 || day > 31) return null;
+
+  const date = new Date(year, month - 1, day);
+  // Guard against JS silently rolling an invalid day (e.g. 2/30) into
+  // the following month.
+  if (date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+
+  return { date, hour: time.hour, minute: time.minute };
 }
 
-// Formats the time portion as a natural 12-hour clock string, e.g. "7:36 AM".
-function formatTime(date) {
-  let hour = date.getHours();
-  const minute = String(date.getMinutes()).padStart(2, '0');
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  hour = hour % 12;
-  if (hour === 0) hour = 12;
-  return `${hour}:${minute} ${ampm}`;
-}
-
-// Returns a new Date with N days added, without mutating the original.
-function addDays(date, numDays) {
-  const result = new Date(date);
-  result.setDate(result.getDate() + numDays);
+// Add a whole number of days to a date, returning a new Date.
+function addDays(date, days) {
+  const result = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  result.setDate(result.getDate() + days);
   return result;
 }
 
-/* =========================================================================
-   MAIN PREDICTION / RENDER PIPELINE
-   Runs on every relevant change: category, time zone, received date/time,
-   and the Dish toggle. No "Predict" button is needed.
-   ========================================================================= */
-function evaluate() {
-  const category = getCheckedValue('category');
-  const timezone = getCheckedValue('timezone');
-  const rawReceived = receivedInput.value;
-
-  // --- Step unlock states -------------------------------------------------
-  setStepState(step2El, !!category);
-  step2Hint.style.display = category ? 'none' : 'flex';
-
-  setStepState(step3El, !!category && !!timezone);
-  step3Hint.style.display = (category && timezone) ? 'none' : 'flex';
-
-  const readyForDate = !!category && !!timezone;
-
-  // If prerequisites aren't met yet, clear everything downstream and stop.
-  if (!readyForDate) {
-    hideResult();
-    return;
-  }
-
-  // --- Parse the received date/time --------------------------------------
-  const parsed = parseReceivedDateTime(rawReceived);
-
-  if (!rawReceived.trim()) {
-    dateError.classList.remove('show');
-    receivedInput.classList.remove('has-error');
-    hideResult();
-    return;
-  }
-
-  if (!parsed.valid) {
-    dateError.textContent = parsed.error;
-    dateError.classList.add('show');
-    receivedInput.classList.add('has-error');
-    hideResult();
-    return;
-  }
-
-  // Valid input — clear any previous error state.
-  dateError.classList.remove('show');
-  receivedInput.classList.remove('has-error');
-
-  // --- Business logic ------------------------------------------------------
-  const cutoffStr = CUTOFF_TIMES[category][timezone];
-  const cutoffMinutes = timeStringToMinutes(cutoffStr);
-  const isDish = dishCheckbox.checked;
-
-  // Before or exactly at cutoff -> +1 day. After cutoff -> +2 days.
-  const isOnTime = parsed.timeMinutes <= cutoffMinutes;
-  let daysToAdd = isOnTime ? 1 : 2;
-  let ruleLabel = isOnTime ? 'Before Cutoff (+1 Day)' : 'After Cutoff (+2 Days)';
-
-  if (isDish) {
-    daysToAdd += 1;
-  }
-
-  const predictedDate = addDays(parsed.date, daysToAdd);
-
-  // --- Render --------------------------------------------------------------
-  outCategory.textContent = category;
-  outTimezone.textContent = timezone;
-  outReceived.textContent = `${formatDate(parsed.date)} ${formatTime(parsed.date)}`;
-  outCutoff.textContent = cutoffStr;
-  outRule.textContent = ruleLabel;
-  outDishTag.style.display = isDish ? 'inline-block' : 'none';
-  outPredicted.textContent = formatDate(predictedDate);
-
-  readout.classList.toggle('late', !isOnTime);
-  readout.classList.add('show');
-  step4Hint.style.display = 'none';
-  setStepState(step4El, true);
+// Format a Date as M/D/YYYY (matches the required output format).
+function formatDate(date) {
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 }
 
-// Toggles a step panel between locked and active/complete visual states.
-function setStepState(stepEl, isUnlocked) {
-  if (isUnlocked) {
-    stepEl.classList.add('is-active');
+// Short weekday label for a date (Sun...Sat), used to label each day
+// in the Friday weekend-span chip list.
+function getWeekdayAbbr(date) {
+  const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return names[date.getDay()];
+}
+
+/* ================================================================
+   VALIDATION
+   Figures out what's missing and returns a single guidance message,
+   or null if every input is complete and valid.
+   ================================================================ */
+function getValidationMessage(category, timezone, rawText, parsed) {
+  if (!category) return 'Select a category to get started.';
+  if (!timezone) return 'Select a time zone to continue.';
+  if (!rawText.trim()) return 'Paste or type the received date & time to see a prediction.';
+  if (!parsed) return 'That doesn\u2019t look right \u2014 use M/D/YYYY H:MM AM/PM, e.g. 7/6/2026 3:47 PM.';
+  return null;
+}
+
+/* ================================================================
+   CORE BUSINESS LOGIC
+   Compares only the clock time against the cutoff clock time.
+   <= cutoff -> +1 day, > cutoff -> +2 days, then +1 more if Dish.
+
+   Friday-only exception: if the received date itself falls on a
+   Friday, Saturday/Sunday are skipped —
+     before/at cutoff -> lands on Monday (+3 days)
+     after cutoff     -> lands on Tuesday (+4 days)
+   Every other day of the week keeps the plain +1 / +2 day rule.
+   ================================================================ */
+const FRIDAY = 5; // Date#getDay(): 0 = Sunday ... 5 = Friday, 6 = Saturday
+
+function computePrediction(category, timezone, receivedDate, time) {
+  const [cutoffHour, cutoffMinute] = CUTOFFS[category][timezone];
+  const receivedMinutes = time.hour * 60 + time.minute;
+  const cutoffMinutes = cutoffHour * 60 + cutoffMinute;
+
+  const isBeforeOrEqual = receivedMinutes <= cutoffMinutes;
+  const isFriday = receivedDate.getDay() === FRIDAY;
+
+  let daysToAdd;
+  if (isFriday) {
+    daysToAdd = isBeforeOrEqual ? 3 : 4; // skips Sat & Sun
   } else {
-    stepEl.classList.remove('is-active', 'is-complete');
+    daysToAdd = isBeforeOrEqual ? 1 : 2;
   }
+
+  const dishChecked = el.dishCheckbox.checked;
+  if (dishChecked) daysToAdd += 1;
+
+  const predictedDate = addDays(receivedDate, daysToAdd);
+
+  return {
+    isBeforeOrEqual,
+    isFriday,
+    dishChecked,
+    daysToAdd,
+    predictedDate,
+    cutoffLabel: formatTime12(cutoffHour, cutoffMinute),
+  };
 }
 
-// Resets the Step 4 readout back to its empty/locked state.
-function hideResult() {
-  readout.classList.remove('show', 'late');
-  step4Hint.style.display = 'flex';
-  step4Hint.textContent = 'Complete the fields above to see the prediction.';
-  setStepState(step4El, false);
+/* ================================================================
+   STEP RAIL + REVEAL STATE
+   ================================================================ */
+function updateStepRail(activeStep) {
+  el.stepRail.forEach((li) => {
+    const step = Number(li.dataset.step);
+    li.classList.remove('is-active', 'is-complete');
+    if (step < activeStep) li.classList.add('is-complete');
+    else if (step === activeStep) li.classList.add('is-active');
+  });
 }
 
-/* =========================================================================
-   EVENT WIRING
-   Every field that can influence the prediction re-runs evaluate().
-   ========================================================================= */
-document.querySelectorAll('input[name="category"]').forEach(el =>
-  el.addEventListener('change', evaluate)
-);
-document.querySelectorAll('input[name="timezone"]').forEach(el =>
-  el.addEventListener('change', evaluate)
-);
-receivedInput.addEventListener('input', evaluate);   // fires on typing AND paste
-receivedInput.addEventListener('paste', () => setTimeout(evaluate, 0));
-dishCheckbox.addEventListener('change', evaluate);
+function setRevealed(wrapper, revealed) {
+  wrapper.classList.toggle('revealed', revealed);
+}
 
-// Initial pass in case the browser autofills any fields on load.
-evaluate();
+/* ================================================================
+   MAIN RENDER — reads all current inputs, updates every dependent
+   part of the UI. Called on every relevant change event.
+   ================================================================ */
+function render() {
+  const category = getCheckedValue(el.categoryInputs);
+  const timezone = getCheckedValue(el.timezoneInputs);
+  const rawText = el.dateTimeInput.value;
+  const parsed = rawText.trim() ? parseDateTime(rawText) : null;
+
+  // Progressive reveal of steps 2 and 3
+  setRevealed(el.wrap2, !!category);
+  setRevealed(el.wrap3, !!category && !!timezone);
+
+  // Inline field error state (only flag once something's been typed)
+  const showError = rawText.trim().length > 0 && !parsed;
+  el.dateTimeInput.classList.toggle('is-invalid', showError);
+  el.dateTimeError.classList.toggle('show', showError);
+
+  const validationMessage = getValidationMessage(category, timezone, rawText, parsed);
+
+  if (validationMessage) {
+    // Not ready yet — show guidance, hide the result step.
+    el.statusMsg.classList.remove('hidden');
+    el.statusText.textContent = validationMessage;
+    setRevealed(el.wrap4, false);
+
+    const activeStep = !category ? 1 : !timezone ? 2 : 3;
+    updateStepRail(activeStep);
+    return;
+  }
+
+  // Everything is valid — compute and display the prediction.
+  el.statusMsg.classList.add('hidden');
+
+  const result = computePrediction(category, timezone, parsed.date, parsed);
+
+  const receivedLabel = `${formatDate(parsed.date)} ${formatTime12(parsed.hour, parsed.minute)}`;
+  const baseRuleText = result.isBeforeOrEqual ? 'Before Cutoff (+1 Day)' : 'After Cutoff (+2 Days)';
+  const weekendNote = result.isFriday
+    ? (result.isBeforeOrEqual ? ' \u2192 Fri, weekend skipped to Mon' : ' \u2192 Fri, weekend skipped to Tue')
+    : '';
+  const dishNote = result.dishChecked ? ' + Dish (+1 Day)' : '';
+  const fullRuleText = `${baseRuleText}${weekendNote}${dishNote}`;
+
+  el.sumCategory.textContent = category;
+  el.sumTimezone.textContent = timezone;
+  el.sumReceived.textContent = receivedLabel;
+  el.sumCutoff.textContent = result.cutoffLabel;
+  el.sumDish.textContent = result.dishChecked ? 'Yes' : 'No';
+  el.sumRule.textContent = fullRuleText;
+
+  // Friday + before/at cutoff spans the weekend, so show every date from
+  // the day after receipt through the final landing day (Sat, Sun, Mon —
+  // or Sat, Sun, Mon, Tue if Dish adds one more). Every other case
+  // (including Friday-after-cutoff) keeps the plain single-date display.
+  const showWeekendSpan = result.isFriday && result.isBeforeOrEqual;
+
+  if (showWeekendSpan) {
+    el.predictedDate.style.display = 'none';
+    el.predictedDateList.style.display = 'flex';
+    el.predictedDateList.innerHTML = '';
+    for (let i = 1; i <= result.daysToAdd; i++) {
+      const spanDate = addDays(parsed.date, i);
+      const isFinal = i === result.daysToAdd;
+      const chip = document.createElement('div');
+      chip.className = 'date-chip' + (isFinal ? ' is-final' : '');
+      const dayEl = document.createElement('p');
+      dayEl.className = 'day';
+      dayEl.textContent = getWeekdayAbbr(spanDate);
+      const dateEl = document.createElement('p');
+      dateEl.className = 'date';
+      dateEl.textContent = formatDate(spanDate);
+      chip.appendChild(dayEl);
+      chip.appendChild(dateEl);
+      el.predictedDateList.appendChild(chip);
+    }
+  } else {
+    el.predictedDateList.style.display = 'none';
+    el.predictedDateList.innerHTML = '';
+    el.predictedDate.style.display = '';
+    el.predictedDate.textContent = formatDate(result.predictedDate);
+  }
+
+  el.ruleRibbon.classList.toggle('after', !result.isBeforeOrEqual);
+  el.ruleRibbonText.textContent = baseRuleText;
+  el.weekendBadge.style.display = result.isFriday ? 'inline-flex' : 'none';
+  el.dishBadge.style.display = result.dishChecked ? 'inline-flex' : 'none';
+
+  setRevealed(el.wrap4, true);
+  updateStepRail(4);
+}
+
+/* ================================================================
+   EVENT WIRING — every relevant change triggers a fresh render.
+   No submit/predict button by design.
+   ================================================================ */
+el.categoryInputs.forEach((input) => input.addEventListener('change', render));
+el.timezoneInputs.forEach((input) => input.addEventListener('change', render));
+el.dateTimeInput.addEventListener('input', render);
+el.dishCheckbox.addEventListener('change', render);
+
+// Initial paint
+render();
 </script>
+
 </body>
 </html>
